@@ -16,7 +16,7 @@ For reasons not entirely clear, the expected mean is also the expected variance.
 this directly in calculating the standard deviation by simply square rooting the mean:
 
     sd = sqrt(mean)
-    distribution
+
 This value then represents the standard deviation that models the expected normal distribution
 for any particular mean.
 
