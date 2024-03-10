@@ -16,8 +16,8 @@ For reasons not entirely clear, the expected mean is also the expected variance.
 this directly in calculating the standard deviation by simply square rooting the mean:
 
     sd = sqrt(mean)
-    
-This value then represents the standard deviation that models the expected normal distrubtion
+    distribution
+This value then represents the standard deviation that models the expected normal distribution
 for any particular mean.
 
 With this we can then calculate z-scores based on observed number of collisions:
@@ -40,16 +40,16 @@ The results we would expect for real randomness would be between 96 and 136 coll
 Representing -1.8 and +1.8 standard deviations respectively.
 
 It is not rare to see values as high as 2.7 or even 3.3 standard deviations, however the likelihood
-decreases exponentially. I have found 4.5 to be a useful threshold for unambigious outliers.
+decreases exponentially. I have found 4.5 to be a useful threshold for unambiguous outliers.
 
-They are such a rare result that if their probability is noticably higher than expected, we can 
+They are such a rare result that if their probability is noticeably higher than expected, we can 
 quickly determine that the hash function exhibits a measurably higher collision rate.
 
 
 # Shortcomings of this test ----
 
 A single z-score has limited value unless a hash function is so biased that all possible z-scores
-represent unambigious outliers.
+represent unambiguous outliers.
 
 I have realized that it is trivial to produce simple multiplicative hashes with collision
 counts often closer to the expectation. And so there is a risk of false negatives if we do not
