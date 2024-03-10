@@ -29,7 +29,7 @@ This value then tells us how many standard deviations the result is from the exp
 # The test ----
 
 A text file is provided which contains a large number of unique strings, one per line.
-Ideally, to test collisions in 32-bit hash functions, we want at least 1 million stirngs.
+Ideally, to test collisions in 32-bit hash functions, we want at least 1 million strings.
 This is to ensure some number of collisions will be found that we can compare against.
 
 So for example, the expected number of collisions after 1 million hashes is:
