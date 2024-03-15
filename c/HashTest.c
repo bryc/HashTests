@@ -1,3 +1,57 @@
+/*
+Current progress:
+
+This is a major step forward from the Java code. But I have some concerns still.
+
+This doesn't thoroughly test a hash starting value.
+It tests each starting value on 8 data sets before incrementing the starting value.
+
+This appears to introduce the concept of "Bad Seeds".
+Bad seeds are starting values which cause drasticly higher occurences of collisions
+compared to other starting values.
+
+While it is useful to identify "bad seeds", many simple hash functions will always
+use a fixed seed, and therefore, it is advantageous to test a particular seed deeply.
+
+So I need a way to deeply test a hash function without varying its seed.
+
+I need a way to generate datasets dynamically. 
+
+------
+
+Ultimately this new test does not corroborate my earlier manual recommendations.
+
+That is to say, I manually tested seeds 0-9, and came up with this list:
+
+[8,3], [9,4], [9,6], [11,3], [13,5], [14,4], [15,5], [17,6]
+
+and this new C program found these:
+
+[7,6], [8,6], [10,5], [11,2], [12,2], [12,3], [13,4], [14,4], [22,5], [23,5]
+
+and so the issue is, only [14,4] is common in both.
+I cannot make any real, reliable observations.
+
+The hash function in question is this:
+
+    hash += (hash << a) + (hash << b); hash += *s;
+    
+I need better criteria to measure these parameters.
+
+It may be that some of these hash functions perform better with specific starting values.
+
+However, we need a common starting value for all of them, which I believe the minimum of 1 is ideal.
+
+I will need to take a break and revisit this later.
+
+TODO:
+
+1) port my old JS tests to C and improve them
+2) alter my current test to focus on just a single seed (rather than many seeds)
+3) actually properly learn statistics in a textbook, so i can have more clear understanding of what i'm trying to do
+
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <time.h>
@@ -41,8 +95,14 @@ char *array;
 unsigned hash(char *s, int seed, int a, int b) {
     unsigned hash;
     for (hash = seed; *s != '\n'; s++) {
-        hash ^= *s; hash += (hash << a) ^ (hash << b);
+        hash += *s; hash += (hash << a) + (hash << b); 
     }
+    /* // force avalanche; should not affect collisions at all.
+    hash ^= hash >> 17; hash *= 0xed5ad4bb;
+    hash ^= hash >> 11; hash *= 0xac4c1b51;
+    hash ^= hash >> 15; hash *= 0x31848bab;
+    hash ^= hash >> 14;
+    */
     return hash;
 }
 
@@ -57,22 +117,24 @@ double pos_score = 0;
 double min = 0;
 double max = 0;
 
-int doitbby(char *dafile, int seed, int a, int b, int count) {
+int kill = 0;
+
+int getCollisions(char *dafile, int seed, int a, int b, int count) {
     memset(array, 0, 4294967296 * sizeof(char));
-    //FILE* file = fopen(dafile, "r");
-    //char line[999];
+    FILE* file = fopen(dafile, "r");
+    char line[999];
     int collisions = 0;
     double n = 0;
     n_trials++;
 
     uint32_t hval;
-    for(int j = 0; j < count; j++) { hval = sfc64() >> 32;
-    //while (fgets(line, sizeof(line), file)) { hval = hash(line, seed, a, b);
+    //for(int j = 0; j < count; j++) { hval = sfc64() >> 32;
+    while (fgets(line, sizeof(line), file)) { hval = hash(line, seed, a, b);
         if(array[hval] == 69) collisions++;
         array[hval] = 69;
         n++;
     }
-    //fclose(file);
+    fclose(file);
 
     total_collisions += collisions;
     double mean = (n*n - n) / 8589934592;
@@ -101,42 +163,58 @@ int doitbby(char *dafile, int seed, int a, int b, int count) {
 
     if(score >= 5) { // OLD: 4.5
         printf("\x1b[30m\x1b[41m");
-        printf("\nTerminated (SD=%f, Seed=%d): [%d,%d]\n", score, seed, a, b);
+        printf("\n[%2d,%2d] Aborted. SD %.3f exceeds threshold. Seed: %d (Trials: %d)",
+        a, b, score, seed,  n_trials);
         printf("\x1b[0m\n");
         exit(0);
+    }
+    if(total_4o >= 3) { // if we hit three 4o's 
+        printf("\x1b[30m\x1b[41m");
+        printf("\n[%2d,%2d] Found too many deviations >= 4. Seed: %d (Trials: %d)",
+        a, b, seed, n_trials);
+        printf("\x1b[0m\n");
+        kill = 1; return 1;
     }
 }
 
 int main(int argc, char *argv[]) {
-    uint64_t rngseed = excess64(); _a = _b = _c = rngseed;
-    for(int i = 0; i < 12; i++) sfc64();
+    //uint64_t rngseed = excess64(); _a = _b = _c = rngseed;
+    //for(int i = 0; i < 12; i++) sfc64();
 
     int a = strtol(argv[1], NULL, 10);
     int b = strtol(argv[2], NULL, 10);
     array = (char *)malloc(4294967296 * sizeof(char));
     
-    printf("Testing [%d,%d] (Seed: %llx)\n", a, b, rngseed);
+    printf("Testing [%d,%d]\n", a, b);
 
     for(int i = 0; i < 99; i++) { // OLD: 40
-        doitbby("data/words_466k.txt", i, a,b, 466550);
-        doitbby("data/usernames_624k.txt", i, a,b, 624370);
-        doitbby("data/words_616k.txt", i, a,b, 616057);
-        doitbby("data/passwords_1000k.txt", i, a,b, 1044698);
-        doitbby("data/domains_1000k.txt", i, a,b,   1000000);
-        doitbby("data/words_1517k.txt", i, a,b, 1516998);
-        doitbby("data/passwords_1470k.txt", i, a,b, 1470580);
-        doitbby("data/passwords_1600k.txt", i, a,b, 1652877);
-        //doitbby("data/passwords_3989k.txt", i, a,b);
-        //doitbby("data/passwords_5189k.txt", i, a,b);
-        //doitbby("data/words_5446k.txt", i, a,b);
-        //doitbby("data/usernames_8295k.txt", i, a,b);
+        getCollisions("data/words_466k.txt", i, a,b, 466550);
+        if(kill == 1) break;
+        getCollisions("data/usernames_624k.txt", i, a,b, 624370);
+        if(kill == 1) break;
+        getCollisions("data/words_616k.txt", i, a,b, 616057);
+        if(kill == 1) break;
+        getCollisions("data/passwords_1000k.txt", i, a,b, 1044698);
+        if(kill == 1) break;
+        getCollisions("data/domains_1000k.txt", i, a,b,   1000000);
+        if(kill == 1) break;
+        getCollisions("data/words_1517k.txt", i, a,b, 1516998);
+        if(kill == 1) break;
+        getCollisions("data/passwords_1470k.txt", i, a,b, 1470580);
+        if(kill == 1) break;
+        getCollisions("data/passwords_1600k.txt", i, a,b, 1652877);
+        if(kill == 1) break;
+        //getCollisions("data/passwords_3989k.txt", i, a,b);
+        //getCollisions("data/passwords_5189k.txt", i, a,b);
+        //getCollisions("data/words_5446k.txt", i, a,b);
+        //getCollisions("data/usernames_8295k.txt", i, a,b);
     }
 
     double sd2 = sqrt(total_mean);
     double total_zscore = (total_collisions - total_mean) / sd2;
     double zavg = avg_score / n_trials;
     double pavg = pos_score / n_trials;
-    printf("\n[%2d,%2d] Z-All: %.4f, Z-Avg: %.4f, P-Avg: %.4f, X: (%d|%d), max: %.3f \n",
+    printf("\n\x1b[32m[%2d,%2d] Z-All: %.4f, Z-Avg: %.4f, P-Avg: %.4f, X: (%d|%d), max: %.3f\x1b[0m\n",
      a, b, total_zscore, zavg, pavg, total_3o, total_4o, max);
     printf("Expected: %.3f, Actual: %d (Trials: %d)\n", total_mean, total_collisions, n_trials);
 
@@ -162,7 +240,7 @@ int main(int argc, char *argv[]) {
     }
     if(total_4o > 1) {
         printf("\x1b[31m");
-        printf("Warning: Found %d outliers > 4 sd - could be bad.", total_3o); 
+        printf("Warning: Found %d outliers > 4 sd - could be bad.", total_4o); 
         printf("\x1b[0m\n");
     }
     return 0;
