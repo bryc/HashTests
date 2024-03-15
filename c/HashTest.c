@@ -7,7 +7,7 @@ This doesn't thoroughly test a hash starting value.
 It tests each starting value on 8 data sets before incrementing the starting value.
 
 This appears to introduce the concept of "Bad Seeds".
-Bad seeds are starting values which cause drasticly higher occurences of collisions
+Bad seeds are starting values which cause drastically higher occurences of collisions
 compared to other starting values.
 
 While it is useful to identify "bad seeds", many simple hash functions will always
