@@ -38,7 +38,7 @@ uint64_t sfc64() { // 0xbadbee
 
 char *array;
 
-unsigned hash(char *s, int seed, int a, int b) {
+unsigned hash(unsigned char *s, int seed, int a, int b) {
     unsigned hash;
     for (hash = seed; *s != '\n'; s++) {
         hash += *s; hash += (hash << a) + (hash << b); 
@@ -146,14 +146,14 @@ int main(int argc, char *argv[]) {
         if(kill == 1) break;
         getCollisions("data/words_1517k.txt", i, a,b, 1516998);
         if(kill == 1) break;
-        getCollisions("data/passwords_1470k.txt", i, a,b, 1470580);
+        getCollisions("data/passwords_1470k.txt", i, a,b, 1470579);
         if(kill == 1) break;
         getCollisions("data/passwords_1600k.txt", i, a,b, 1652877);
         if(kill == 1) break;
-        //getCollisions("data/passwords_3989k.txt", i, a,b);
-        //getCollisions("data/passwords_5189k.txt", i, a,b);
-        //getCollisions("data/words_5446k.txt", i, a,b);
-        //getCollisions("data/usernames_8295k.txt", i, a,b);
+        //getCollisions("data/passwords_3989k.txt", i, a,b, 3989290);
+        //getCollisions("data/passwords_5189k.txt", i, a,b, 5189402);
+        //getCollisions("data/words_5446k.txt", i, a,b, 5446758);
+        //getCollisions("data/usernames_8295k.txt", i, a,b, 8295419);
     }
 
     double sd2 = sqrt(total_mean);
