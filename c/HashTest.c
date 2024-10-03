@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
         if(kill == 1) break;
         getCollisions("data/words_616k.txt", i, a,b, 616057);
         if(kill == 1) break;
-        getCollisions("data/passwords_1000k.txt", i, a,b, 1044698);
+        getCollisions("data/passwords_1000k.txt", i, a,b, 1044697);
         if(kill == 1) break;
         getCollisions("data/domains_1000k.txt", i, a,b,   1000000);
         if(kill == 1) break;
@@ -150,9 +150,9 @@ int main(int argc, char *argv[]) {
         if(kill == 1) break;
         getCollisions("data/passwords_1600k.txt", i, a,b, 1652877);
         if(kill == 1) break;
-        //getCollisions("data/passwords_3989k.txt", i, a,b, 3989290);
+        //getCollisions("data/passwords_3989k.txt", i, a,b, 3989260);
         //getCollisions("data/passwords_5189k.txt", i, a,b, 5189402);
-        //getCollisions("data/words_5446k.txt", i, a,b, 5446758);
+        //getCollisions("data/words_5446k.txt", i, a,b, 5446730);
         //getCollisions("data/usernames_8295k.txt", i, a,b, 8295419);
     }
 
