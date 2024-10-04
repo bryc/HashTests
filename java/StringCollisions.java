@@ -21,7 +21,7 @@ public class HashTest {
         return result;
     }
     public static void main(String[] args) throws IOException {
-        Collection<String> lines = Files.readAllLines(new File(args[0]).toPath(), StandardCharsets.ISO_8859_1););
+        Collection<String> lines = Files.readAllLines(new File(args[0]).toPath(), StandardCharsets.ISO_8859_1);
         Map<Integer, String> hashes;
         double n = lines.size(), mean = (n*n - n) / (Math.pow(2, 32) * 2), sd = Math.sqrt(mean);
         double collisions = 0, score = 0;
@@ -33,19 +33,19 @@ public class HashTest {
             score = (collisions - mean) / sd;
             
             String color = "\u001B[32m";
-            if(Math.abs(score) >= 2) color = "\u001B[36m";
+            if(Math.abs(score) >= 2.0) color = "\u001B[36m";
             if(Math.abs(score) >= 2.5) color = "\u001B[93m";
-            if(Math.abs(score) >= 3) color = "\u001B[33m";
+            if(Math.abs(score) >= 3.0) color = "\u001B[33m";
             if(Math.abs(score) >= 3.6) color = "\u001B[31m";
             if(Math.abs(score) >= 4.5) color = "\u001B[30m\u001B[41m";
             
             System.out.println(
                 String.format("%5d, ", (int)collisions) +
-                String.format("%5d, ", (int)mean) + color + 
+                String.format("%5.0f, ", mean) + color + 
                 (score+"").substring(0, 12) + "\u001B[0m - "  + 
                 args[0].substring(7) + " (" + (int)n + ")"
             );
-        }   
+        }
         long finish = System.nanoTime(), elapsed = finish - start;
     }
 }
