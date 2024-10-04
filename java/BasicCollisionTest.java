@@ -42,7 +42,7 @@ public class HashTest {
             System.out.println(
                 String.format("%5d, ", (int)collisions) +
                 String.format("%5.0f, ", mean) + color + 
-                (score+"").substring(0, 12) + "\u001B[0m - "  + 
+                (score+"").substring(0, 12) + "\u001B[0m "  + 
                 args[0].substring(7) + " (" + (int)n + ")"
             );
         }
