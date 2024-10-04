@@ -40,8 +40,8 @@ public class HashTest {
             if(Math.abs(score) >= 4.5) color = "\u001B[30m\u001B[41m";
             
             System.out.println(
-                String.format("%5d, ", (int)collisions) +
-                String.format("%5.0f, ", mean) + color + 
+                String.format("%5.0f, ", mean) +
+                String.format("%5d, ", (int)collisions) + color + 
                 (score+"").substring(0, 12) + "\u001B[0m "  + 
                 args[0].substring(7) + " (" + (int)n + ")"
             );
