@@ -35,7 +35,7 @@ int getCollisions(char *fPath) {
     double score = (collisions - mean) / sd;
     
     // Print result of collision test
-    printf("%5d, %5.0f, ", collisions, mean);
+    printf("%5.0f, %5d, ", mean, collisions);
     double scoreAbs = fabs(score);
          if(scoreAbs >= 4.5) printf("\x1b[30m\x1b[41m");
     else if(scoreAbs >= 3.7) printf("\x1b[31m");
@@ -43,7 +43,7 @@ int getCollisions(char *fPath) {
     else if(scoreAbs >= 2.6) printf("\x1b[93m");
     else if(scoreAbs >= 2.1) printf("\x1b[36m");
     else printf("\x1b[32m");
-    char scoreStr[12]; gcvt(score, 16, scoreStr);
+    char scoreStr[12]; sprintf(scoreStr, "%.12f", score);
     printf("%.12s\x1b[0m %s (%.0f) \n", scoreStr, &fPath[5], n);
 }
 
