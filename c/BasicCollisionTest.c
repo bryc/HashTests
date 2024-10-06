@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 
-char *array;
+char *hashBox;
 
 // Hash function to test
 unsigned hash(unsigned char *c) {
@@ -15,7 +15,7 @@ unsigned hash(unsigned char *c) {
 }
 
 int getCollisions(char *fPath) {
-    memset(array, 0, 4294967296*sizeof(char)); //clear
+    memset(hashBox, 0, 4294967296*sizeof(char)); //clear
     FILE* file = fopen(fPath, "r");
     
     // Read lines, calc hashes, find collisions
@@ -24,8 +24,8 @@ int getCollisions(char *fPath) {
     char line[999]; // current line
     while(fgets(line, sizeof(line), file)) { n++;
         unsigned hval = hash(line);
-        if(array[hval] == 1) collisions++;
-        array[hval] = 1;
+        if(hashBox[hval] == 1) collisions++;
+        hashBox[hval] = 1;
     }
     fclose(file);
 
@@ -48,7 +48,7 @@ int getCollisions(char *fPath) {
 }
 
 int main(int argc, char *argv[]) {
-    array = (char *)malloc(4294967296*sizeof(char));
+    hashBox = (char *)malloc(4294967296*sizeof(char));
     
     for(int i = 0; i < 1; i++) {
         getCollisions("data/words_466k.txt");
